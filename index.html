@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>세 변의 길이와 삼각형 탐구 실험실</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #F4F7FE 0%, #FFF8F6 100%);
+      --card-bg: #FFFFFF;
+      --primary: #FF6B8B;
+      --primary-light: #FFEBF0;
+      --secondary: #5E72E4;
+      --secondary-light: #EDF0FD;
+      --accent: #FFAB00;
+      --accent-light: #FFF6E5;
+      --mint: #2DCE89;
+      --mint-light: #E7FAF2;
+      --purple: #825EE4;
+      --text-main: #2D3748;
+      --text-sub: #718096;
+      --border-soft: #EDF2F7;
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 10px 25px -5px rgba(50, 50, 93, 0.07), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 14px 10px 40px;
+    }
+
+    .wrapper {
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    /* 헤더 */
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .badge-class {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: #EDE9FE;
+      color: var(--purple);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    h1 {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.85rem;
+      color: #1A202C;
+      margin-bottom: 4px;
+    }
+    .header-sub {
+      color: var(--text-sub);
+      font-size: 0.92rem;
+    }
+
+    /* 4단계 탐구 플로우 바 (반응형 가로 스크롤 / 탭) */
+    .step-navigator {
+      display: flex;
+      gap: 8px;
+      background: #FFFFFF;
+      padding: 8px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .step-navigator::-webkit-scrollbar { display: none; }
+
+    .step-btn {
+      flex: 1;
+      min-width: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 8px;
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-md);
+      background: #F7FAFC;
+      font-family: 'Jua', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .step-btn.active {
+      background: var(--secondary);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(94, 114, 228, 0.35);
+      border-color: var(--secondary);
+    }
+    .step-btn .badge-num {
+      background: rgba(255, 255, 255, 0.25);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .step-btn:not(.active) .badge-num {
+      background: #E2E8F0;
+      color: #4A5568;
+    }
+
+    /* 탐구 미션 가이드 카드 */
+    .quest-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border-left: 6px solid var(--secondary);
+      box-shadow: var(--shadow-sm);
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quest-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .quest-tag {
+      font-family: 'Jua', sans-serif;
+      font-size: 0.95rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quest-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.22rem;
+      color: #2D3748;
+    }
+    .quest-desc {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #4A5568;
+    }
+    .preset-btn-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .btn-preset {
+      border: 1.5px dashed var(--secondary);
+      background: var(--secondary-light);
+      color: var(--secondary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-preset:hover {
+      background: var(--secondary);
+      color: white;
+    }
+
+    /* 메인 2단 반응형 그리드 */
+    .app-main {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 좌측: 컨트롤 패널 */
+    .card-panel {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-soft);
+    }
+    .panel-subtitle {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.15rem;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-box {
+      background: #FAFCFF;
+      border: 1.5px solid #E8EEF5;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .slider-box.a { border-color: #FFCAD4; background: #FFF9FA; }
+    .slider-box.b { border-color: #C9D5FF; background: #F8F9FE; }
+    .slider-box.c { border-color: #FFE6A8; background: #FFFDF7; }
+
+    .slider-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .name-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Jua', sans-serif;
+      font-size: 1rem;
+    }
+    .circle-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-a { background: var(--primary); }
+    .dot-b { background: var(--secondary); }
+    .dot-c { background: var(--accent); }
+
+    .side-value {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #2D3748;
+      background: #FFFFFF;
+      padding: 1px 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .slider-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type="range"] {
+      flex: 1;
+      height: 7px;
+      border-radius: 5px;
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-box.a input[type="range"] { accent-color: var(--primary); }
+    .slider-box.b input[type="range"] { accent-color: var(--secondary); }
+    .slider-box.c input[type="range"] { accent-color: var(--accent); }
+
+    .step-counter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #D1D5DB;
+      background: white;
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #4A5568;
+    }
+    .step-counter:active { transform: scale(0.92); }
+
+    /* 학생 탐구 기록 질문 박스 */
+    .inquiry-record {
+      margin-top: 14px;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+    .inquiry-q {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #2D3748;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .inquiry-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .opt-btn {
+      background: white;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.84rem;
+      color: #4A5568;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .opt-btn.correct {
+      background: #DEF7EC;
+      border-color: #31C48D;
+      color: #03543F;
+      font-weight: 700;
+    }
+    .opt-btn.wrong {
+      background: #FDE8E8;
+      border-color: #F98080;
+      color: #9B1C1C;
+    }
+    .feedback-msg {
+      font-size: 0.82rem;
+      margin-top: 6px;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* 우측: 시각화 및 부등호 비교 영역 */
+    .view-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 결과 판정 배너 */
+    .result-badge {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+    }
+    .result-badge.yes {
+      background: var(--mint-light);
+      border: 2px solid #84E1BC;
+    }
+    .result-badge.flat {
+      background: var(--accent-light);
+      border: 2px solid #FCD34D;
+    }
+    .result-badge.no {
+      background: var(--primary-light);
+      border: 2px solid #FCA5A5;
+    }
+    .result-emoji {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+    .result-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 2px;
+    }
+    .result-badge.yes .result-title { color: #0E704D; }
+    .result-badge.flat .result-title { color: #A15500; }
+    .result-badge.no .result-title { color: #B91C1C; }
+    .result-detail {
+      font-size: 0.88rem;
+      color: #4B5563;
+    }
+
+    /* 캔버스 */
+    .canvas-wrap {
+      background: #FFFFFF;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--border-soft);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .canvas-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #FDFEFE;
+      border-bottom: 1.5px solid #F0F4F8;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .toggle-group {
+      display: flex;
+      gap: 6px;
+    }
+    .view-btn {
+      background: #F1F5F9;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-family: 'Jua', sans-serif;
+      font-size: 0.85rem;
+      color: #64748B;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .view-btn.active {
+      background: var(--secondary);
+      color: #FFFFFF;
+    }
+
+    #triangleCanvas {
+      width: 100%;
+      height: 350px;
+      display: block;
+      background-color: #FAFBFF;
+      background-image: radial-gradient(#E2E8F0 1.2px, transparent 1.2px);
+      background-size: 18px 18px;
+    }
+
+    /* 시각적 길이 비교 바 */
+    .bar-analysis {
+      background: #FFFFFF;
+      border-radius: var(--radius-xl);
+      padding: 16px 18px;
+      border: 1.5px solid var(--border-soft);
+      box-shadow: var(--shadow-card);
+    }
+    .analysis-header {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .bar-title {
+      width: 110px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #4A5568;
+    }
+    .bar-track {
+      flex: 1;
+      height: 22px;
+      background: #EDF2F7;
+      border-radius: 50px;
+      overflow: hidden;
+      display: flex;
+    }
+    .seg {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: white;
+      transition: width 0.2s ease;
+      white-space: nowrap;
+    }
+    .seg-a { background: var(--primary); }
+    .seg-b { background: var(--secondary); }
+    .seg-c { background: var(--accent); }
+
+    .formula-banner {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #F8FAFC;
+      border-radius: var(--radius-md);
+      font-family: 'Nunito', 'Jua', sans-serif;
+      font-size: 1.05rem;
+      text-align: center;
+      border: 1px dashed #CBD5E1;
+    }
+
+    /* 하단 핵심 발견 정리 요약 카드 */
+    .summary-card {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    .summary-text h3 {
+      font-family: 'Jua', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+    .summary-text p {
+      font-size: 0.92rem;
+      opacity: 0.95;
+    }
+    .btn-quiz {
+      background: #FFFFFF;
+      color: #667EEA;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-family: 'Jua', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.15s;
+    }
+    .btn-quiz:hover { transform: scale(1.05); }
+
+    /* 모달 퀴즈 팝업 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .modal-box {
+      background: white;
+      border-radius: var(--radius-xl);
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Jua', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #A0AEC0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <!-- 상단 헤더 -->
+  <header>
+    <div class="badge-class">✨ 중1 수학 발견 수업 프로젝트</div>
+    <h1>📐 세 변의 길이와 삼각형 탐구 실험실</h1>
+    <p class="header-sub">세 변의 길이를 자유롭게 바꾸며 삼각형이 만들어지는 규칙을 찾아보세요!</p>
+  </header>
+
+  <!-- 4단계 탐구 질문 로드맵 네비게이션 -->
+  <div class="step-navigator">
+    <button class="step-btn active" onclick="goStep(1)">
+      <span class="badge-num">1</span> <span>안 만나는 경우</span>
+    </button>
+    <button class="step-btn" onclick="goStep(2)">
+      <span class="badge-num">2</span> <span>딱 닿는 경우</span>
+    </button>
+    <button class="step-btn" onclick="goStep(3)">
+      <span class="badge-num">3</span> <span>삼각형 완성!</span>
+    </button>
+    <button class="step-btn" onclick="goStep(4)">
+      <span class="badge-num">4</span> <span>성립 조건 발견</span>
+    </button>
+  </div>
+
+  <!-- 단계별 탐구 미션 & 질문 안내 카드 -->
+  <div class="quest-card" id="questCard">
+    <div class="quest-header">
+      <span class="quest-tag" id="stepTag">🎯 STEP 1. 안 만나는 비밀 찾기</span>
+      <div class="preset-btn-wrap" id="presetWrap">
+        <!-- 동적 삽입 -->
+      </div>
+    </div>
+    <h2 class="quest-title" id="stepQuestion">Q1. 왜 두 원(컴퍼스)이 서로 만나지 못할까요?</h2>
+    <p class="quest-desc" id="stepDesc">
+      밑변(a)을 10으로 두고, 나머지 두 변(b, c)을 각각 3과 4로 만들어 보세요. 두 원호의 교점이 생기나요?
+    </p>
+  </div>
+
+  <!-- 메인 레이아웃 (좌: 슬라이더 & 탐구질문 / 우: 캔버스 & 비교바) -->
+  <div class="app-main">
+
+    <!-- 좌측 컨트롤 & 질문 선택지 -->
+    <div class="card-panel">
+      <div class="panel-subtitle">
+        <span>📏 세 변의 길이 조절</span>
+        <span style="font-size:0.8rem; color:#888;">단위: cm</span>
+      </div>
+
+      <!-- 변 a -->
+      <div class="slider-box a">
+        <div class="slider-top">
+          <div class="name-dot"><span class="circle-dot dot-a"></span> 밑변 a</div>
+          <span class="side-value" id="valA">10</span>
+        </div>
+        <div class="slider-control">
+          <button class="step-counter" onclick="changeSide('a', -1)">-</button>
+          <input type="range" id="rangeA" min="1" max="15" value="10">
+          <button class="step-counter" onclick="changeSide('a', 1)">+</button>
+        </div>
+      </div>
+
+      <!-- 변 b -->
+      <div class="slider-box b">
+        <div class="slider-top">
+          <div class="name-dot"><span class="circle-dot dot-b"></span> 왼쪽 변 b</div>
+          <span class="side-value" id="valB">3</span>
+        </div>
+        <div class="slider-control">
+          <button class="step-counter" onclick="changeSide('b', -1)">-</button>
+          <input type="range" id="rangeB" min="1" max="15" value="3">
+          <button class="step-counter" onclick="changeSide('b', 1)">+</button>
+        </div>
+      </div>
+
+      <!-- 변 c -->
+      <div class="slider-box c">
+        <div class="slider-top">
+          <div class="name-dot"><span class="circle-dot dot-c"></span> 오른쪽 변 c</div>
+          <span class="side-value" id="valC">4</span>
+        </div>
+        <div class="slider-control">
+          <button class="step-counter" onclick="changeSide('c', -1)">-</button>
+          <input type="range" id="rangeC" min="1" max="15" value="4">
+          <button class="step-counter" onclick="changeSide('c', 1)">+</button>
+        </div>
+      </div>
+
+      <!-- 학생 직접 발견 인터랙티브 문답 박스 -->
+      <div class="inquiry-record">
+        <div class="inquiry-q">
+          <span>❓</span> <span id="quizQuestionText">두 원이 만나지 않는 진짜 이유는 무엇일까요?</span>
+        </div>
+        <div class="inquiry-options" id="quizOptionContainer">
+          <!-- 동적 옵션 생성 -->
+        </div>
+        <div class="feedback-msg" id="quizFeedback"></div>
+      </div>
+    </div>
+
+    <!-- 우측 인터랙티브 캔버스 및 시각화 -->
+    <div class="view-area">
+      
+      <!-- 실시간 상태 알림 배지 -->
+      <div class="result-badge no" id="resultBadge">
+        <div class="result-emoji" id="resultEmoji">💔</div>
+        <div>
+          <div class="result-title" id="resultTitle">삼각형을 만들 수 없어요!</div>
+          <div class="result-detail" id="resultDetail">두 변의 길이가 너무 짧아 컴퍼스 원호가 서로 닿지 않습니다.</div>
+        </div>
+      </div>
+
+      <!-- 지오메트리 캔버스 -->
+      <div class="canvas-wrap">
+        <div class="canvas-head">
+          <div class="toggle-group">
+            <button class="view-btn active" id="btnCompass" onclick="switchVisual('compass')">⭕ 컴퍼스 원호</button>
+            <button class="view-btn" id="btnSticks" onclick="switchVisual('sticks')">🥢 막대 눕혀보기</button>
+          </div>
+          <span style="font-size:0.8rem; color:#6B7280;" id="canvasHint">💡 두 원의 교점이 생겨야 꼭짓점이 완성돼요</span>
+        </div>
+        <canvas id="triangleCanvas" width="600" height="350"></canvas>
+      </div>
+
+      <!-- 시각적 길이 비교 바 -->
+      <div class="bar-analysis">
+        <div class="analysis-header">
+          <span>📊 눈으로 확인하는 길이 비교</span>
+          <span style="font-size:0.82rem; color:#888;">가장 긴 변 vs 나머지 두 변의 합</span>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-title">가장 긴 변 (<span id="longestLetter">a</span>)</div>
+          <div class="bar-track">
+            <div class="seg" id="longestBar" style="width: 60%;">10</div>
+          </div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-title">나머지 두 변의 합</div>
+          <div class="bar-track">
+            <div class="seg" id="restBar1" style="width: 18%;">3</div>
+            <div class="seg" id="restBar2" style="width: 24%;">4</div>
+          </div>
+        </div>
+
+        <div class="formula-banner" id="formulaBanner">
+          가장 긴 변 (10) &gt; 나머지 두 변의 합 (7) ➜ <strong>삼각형 불가 ❌</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 하단 발견 정리 & 미니 퀴즈 트리거 -->
+  <div class="summary-card">
+    <div class="summary-text">
+      <h3>🎉 삼각형의 결정 조건(삼각형 성립 조건) 발견!</h3>
+      <p>삼각형이 만들어지려면? <strong>(가장 긴 변의 길이) &lt; (나머지 두 변의 길이의 합)</strong></p>
+    </div>
+    <button class="btn-quiz" onclick="openFinalQuiz()">도전! 발견 확인 퀴즈 🏆</button>
+  </div>
+</div>
+
+<!-- 최종 발견 확인 퀴즈 모달 -->
+<div class="modal-overlay" id="quizModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>🏆 삼각형 마스터 퀴즈</span>
+      <button class="btn-close" onclick="closeFinalQuiz()">&times;</button>
+    </div>
+    <p style="font-size:0.95rem; color:#4A5568; margin-bottom:14px;">
+      다음 세 변의 길이 중, 삼각형을 <strong>만들 수 있는 것</strong>은 어느 것일까요?
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <button class="opt-btn" onclick="checkFinal(this, false)">① 3cm, 4cm, 8cm</button>
+      <button class="opt-btn" onclick="checkFinal(this, false)">② 5cm, 5cm, 10cm</button>
+      <button class="opt-btn" onclick="checkFinal(this, true)">③ 6cm, 7cm, 9cm</button>
+      <button class="opt-btn" onclick="checkFinal(this, false)">④ 2cm, 2cm, 5cm</button>
+    </div>
+    <div id="finalFeedback" style="margin-top:12px; font-size:0.9rem; font-weight:700; display:none;"></div>
+  </div>
+</div>
+
+<script>
+  // 상태 변수
+  let currentStep = 1;
+  let sideA = 10, sideB = 3, sideC = 4;
+  let visualMode = 'compass'; // 'compass' | 'sticks'
+
+  // 단계별 탐구 데이터
+  const stepData = {
+    1: {
+      tag: "🎯 STEP 1. 안 만나는 비밀 찾기",
+      title: "Q1. 왜 두 원(컴퍼스)이 서로 만나지 못할까요?",
+      desc: "밑변(a)이 10일 때 양쪽에서 반지름 3, 4로 원을 그려보세요. 두 원이 가운데서 닿나요?",
+      presets: [
+        { label: "실험 세팅 [10, 3, 4]", a: 10, b: 3, c: 4 },
+        { label: "더 짧게 [12, 3, 2]", a: 12, b: 3, c: 2 }
+      ],
+      question: "두 원이 만나지 않는 진짜 이유는 무엇일까요?",
+      options: [
+        { text: "밑변(10)이 두 변의 합(3+4=7)보다 더 길어서", correct: true },
+        { text: "컴퍼스를 거꾸로 돌려서", correct: false },
+        { text: "숫자가 모두 짝수가 아니라서", correct: false }
+      ],
+      comment: "정답! 양쪽에서 뻗어 나온 두 변의 길이(7)가 밑변(10)보다 짧아서 중간이 비어요!"
+    },
+    2: {
+      tag: "🎯 STEP 2. 아슬아슬 맞닿는 순간 관찰",
+      title: "Q2. 두 변의 합이 밑변과 정확히 같아지면 어떻게 될까요?",
+      desc: "밑변(a)을 10으로 두고 b=4, c=6 으로 맞춰보세요. 꼭짓점이 위로 솟아오르나요?",
+      presets: [
+        { label: "실험 세팅 [10, 4, 6]", a: 10, b: 4, c: 6 },
+        { label: "또 다른 접선 [8, 4, 4]", a: 8, b: 4, c: 4 }
+      ],
+      question: "두 원이 딱 한 점에서 맞닿았을 때, 삼각형이 될까요?",
+      options: [
+        { text: "삼각형이 된다 (꼭짓점이 1개 생김)", correct: false },
+        { text: "삼각형이 안 된다 (높이가 0인 그냥 일직선이 됨)", correct: true }
+      ],
+      comment: "맞아요! 두 변이 밑변 위로 완전히 포개져서 높이가 없는 선분이 되어버려요."
+    },
+    3: {
+      tag: "🎯 STEP 3. 드디어 삼각형 완성!",
+      title: "Q3. 교점이 2개 생기며 위로 볼록 솟으려면?",
+      desc: "b를 6, c를 7로 조금씩 키워보세요. 드디어 위쪽에서 두 원호가 교차하나요?",
+      presets: [
+        { label: "실험 세팅 [8, 6, 7]", a: 8, b: 6, c: 7 },
+        { label: "정삼각형 [6, 6, 6]", a: 6, b: 6, c: 6 }
+      ],
+      question: "삼각형 꼭짓점이 위로 생기기 위한 조건은?",
+      options: [
+        { text: "두 변의 합이 밑변보다 더 길어야 한다", correct: true },
+        { text: "세 변의 길이가 모두 똑같아야만 한다", correct: false }
+      ],
+      comment: "훌륭해요! 나머지 두 변의 합이 밑변보다 여유 있게 길어야 위쪽에서 만납니다!"
+    },
+    4: {
+      tag: "🎯 STEP 4. 스스로 규칙 공식화하기",
+      title: "Q4. 어느 변이 가장 길더라도 성립하는 만능 법칙은?",
+      desc: "밑변만 길 필요는 없어요! a=5, b=12, c=8 처럼 가장 긴 변의 위치를 바꿔보며 탐구해보세요.",
+      presets: [
+        { label: "b가 가장 긺 [5, 12, 8]", a: 5, b: 12, c: 8 },
+        { label: "c가 가장 긺 [4, 5, 11]", a: 4, b: 5, c: 11 }
+      ],
+      question: "어떤 세 변이 주어져도 삼각형이 될 수 있는 유일한 원리는?",
+      options: [
+        { text: "(가장 긴 변) < (나머지 두 변의 길이의 합)", correct: true },
+        { text: "(가장 긴 변) = (나머지 두 변의 길이의 합)", correct: false },
+        { text: "(세 변의 합)이 항상 180cm이어야 한다", correct: false }
+      ],
+      comment: "완벽합니다! 이것이 교과서에 나오는 '삼각형의 세 변의 길이의 관계' 핵심 성립 조건입니다!"
+    }
+  };
+
+  const canvas = document.getElementById('triangleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // 요소 참조
+  const rangeA = document.getElementById('rangeA');
+  const rangeB = document.getElementById('rangeB');
+  const rangeC = document.getElementById('rangeC');
+  const valA = document.getElementById('valA');
+  const valB = document.getElementById('valB');
+  const valC = document.getElementById('valC');
+
+  // 이벤트 연결
+  rangeA.addEventListener('input', e => setSideDirect('a', +e.target.value));
+  rangeB.addEventListener('input', e => setSideDirect('b', +e.target.value));
+  rangeC.addEventListener('input', e => setSideDirect('c', +e.target.value));
+
+  function setSideDirect(side, val) {
+    if (side === 'a') { sideA = val; valA.innerText = val; rangeA.value = val; }
+    if (side === 'b') { sideB = val; valB.innerText = val; rangeB.value = val; }
+    if (side === 'c') { sideC = val; valC.innerText = val; rangeC.value = val; }
+    render();
+  }
+
+  function changeSide(side, delta) {
+    if (side === 'a') setSideDirect('a', Math.min(15, Math.max(1, sideA + delta)));
+    if (side === 'b') setSideDirect('b', Math.min(15, Math.max(1, sideB + delta)));
+    if (side === 'c') setSideDirect('c', Math.min(15, Math.max(1, sideC + delta)));
+  }
+
+  // 스텝 전환
+  function goStep(stepNum) {
+    currentStep = stepNum;
+    document.querySelectorAll('.step-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx + 1 === stepNum);
+    });
+
+    const data = stepData[stepNum];
+    document.getElementById('stepTag').innerText = data.tag;
+    document.getElementById('stepQuestion').innerText = data.title;
+    document.getElementById('stepDesc').innerText = data.desc;
+
+    // 프리셋 버튼 로드
+    const presetWrap = document.getElementById('presetWrap');
+    presetWrap.innerHTML = '';
+    data.presets.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-preset';
+      btn.innerHTML = `<span>👉</span> ${p.label}`;
+      btn.onclick = () => {
+        setSideDirect('a', p.a);
+        setSideDirect('b', p.b);
+        setSideDirect('c', p.c);
+      };
+      presetWrap.appendChild(btn);
+    });
+
+    // 기본 프리셋 첫 값 적용
+    const initPreset = data.presets[0];
+    setSideDirect('a', initPreset.a);
+    setSideDirect('b', initPreset.b);
+    setSideDirect('c', initPreset.c);
+
+    // 탐구 질문 생성
+    renderInquiryQuiz(data);
+  }
+
+  function renderInquiryQuiz(data) {
+    document.getElementById('quizQuestionText').innerText = data.question;
+    const optContainer = document.getElementById('quizOptionContainer');
+    const feedback = document.getElementById('quizFeedback');
+    optContainer.innerHTML = '';
+    feedback.style.display = 'none';
+
+    data.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerText = opt.text;
+      btn.onclick = function() {
+        if (opt.correct) {
+          btn.className = 'opt-btn correct';
+          feedback.style.display = 'block';
+          feedback.style.color = '#0E704D';
+          feedback.innerText = `👏 ${data.comment}`;
+        } else {
+          btn.className = 'opt-btn wrong';
+          feedback.style.display = 'block';
+          feedback.style.color = '#C53030';
+          feedback.innerText = '🤔 다시 한 번 캔버스와 길이 비교 바를 자세히 관찰해보세요!';
+        }
+      };
+      optContainer.appendChild(btn);
+    });
+  }
+
+  function switchVisual(mode) {
+    visualMode = mode;
+    document.getElementById('btnCompass').classList.toggle('active', mode === 'compass');
+    document.getElementById('btnSticks').classList.toggle('active', mode === 'sticks');
+    document.getElementById('canvasHint').innerText = mode === 'compass' 
+      ? '💡 두 원의 교점이 생겨야 꼭짓점이 완성돼요' 
+      : '🥢 양쪽 막대를 바닥으로 기울였을 때 틈이 생기는지 보세요';
+    render();
+  }
+
+  // 캔버스 반응형 크기 동기화
+  function fitCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    render();
+  }
+  window.addEventListener('resize', fitCanvas);
+
+  function render() {
+    drawCanvas();
+    updateComparison();
+  }
+
+  function drawCanvas() {
+    const w = canvas.width;
+    const h = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, w, h);
+
+    const maxSide = Math.max(sideA, sideB + sideC, 12);
+    const scale = (w * 0.58) / maxSide;
+
+    const baseLen = sideA * scale;
+    const baselineY = h * 0.72;
+    const startX = (w - baseLen) / 2;
+    const endX = startX + baseLen;
+
+    const pB = { x: startX, y: baselineY };
+    const pC = { x: endX, y: baselineY };
+
+    // 밑변 a 그리기
+    ctx.lineWidth = 8 * dpr;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#FF6B8B';
+    ctx.beginPath();
+    ctx.moveTo(pB.x, pB.y);
+    ctx.lineTo(pC.x, pC.y);
+    ctx.stroke();
+
+    drawNode(pB.x, pB.y, '#FF6B8B', 'B');
+    drawNode(pC.x, pC.y, '#FF6B8B', 'C');
+
+    // 밑변 라벨
+    ctx.fillStyle = '#C53030';
+    ctx.font = `bold ${13 * dpr}px 'Nunito', 'Jua'`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`밑변 a = ${sideA}`, (pB.x + pC.x) / 2, baselineY + 28 * dpr);
+
+    const rB = sideB * scale;
+    const rC = sideC * scale;
+
+    if (visualMode === 'compass') {
+      // 컴퍼스 궤적
+      drawArc(pB, rB, '#5E72E4', `b=${sideB}`);
+      drawArc(pC, rC, '#FFAB00', `c=${sideC}`);
+
+      const inter = getCircleIntersections(0, rB, baseLen, rC);
+
+      if (inter.status === 'two') {
+        const pA = { x: pB.x + inter.x, y: pB.y - inter.y };
+
+        // 삼각형 면 채우기
+        ctx.fillStyle = 'rgba(94, 114, 228, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(pB.x, pB.y);
+        ctx.lineTo(pA.x, pA.y);
+        ctx.lineTo(pC.x, pC.y);
+        ctx.closePath();
+        ctx.fill();
+
+        // 변 b, c 그리기
+        ctx.lineWidth = 5 * dpr;
+        ctx.strokeStyle = '#5E72E4';
+        ctx.beginPath();
+        ctx.moveTo(pB.x, pB.y);
+        ctx.lineTo(pA.x, pA.y);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#FFAB00';
+        ctx.beginPath();
+        ctx.moveTo(pC.x, pC.y);
+        ctx.lineTo(pA.x, pA.y);
+        ctx.stroke();
+
+        drawNode(pA.x, pA.y, '#825EE4', 'A (교점)');
+      } else if (inter.status === 'touch') {
+        const touchX = pB.x + rB;
+        drawNode(touchX, baselineY, '#FFAB00', '접점(일직선)');
+      }
+    } else {
+      // 막대 접기 모드
+      let angB = Math.PI * 0.18;
+      let angC = Math.PI - Math.PI * 0.18;
+
+      if (sideB + sideC > sideA && sideA + sideB > sideC && sideA + sideC > sideB) {
+        const cosB = (sideA*sideA + sideB*sideB - sideC*sideC) / (2*sideA*sideB);
+        angB = Math.acos(Math.max(-1, Math.min(1, cosB)));
+        const cosC = (sideA*sideA + sideC*sideC - sideB*sideB) / (2*sideA*sideC);
+        angC = Math.PI - Math.acos(Math.max(-1, Math.min(1, cosC)));
+      }
+
+      const pA_left = { x: pB.x + Math.cos(angB) * rB, y: pB.y - Math.sin(angB) * rB };
+      const pA_right = { x: pC.x + Math.cos(angC) * rC, y: pC.y - Math.sin(angC) * rC };
+
+      ctx.lineWidth = 7 * dpr;
+      ctx.strokeStyle = '#5E72E4';
+      ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pA_left.x, pA_left.y); ctx.stroke();
+      drawNode(pA_left.x, pA_left.y, '#5E72E4', `b(${sideB})`);
+
+      ctx.strokeStyle = '#FFAB00';
+      ctx.beginPath(); ctx.moveTo(pC.x, pC.y); ctx.lineTo(pA_right.x, pA_right.y); ctx.stroke();
+      drawNode(pA_right.x, pA_right.y, '#FFAB00', `c(${sideC})`);
+
+      if (sideB + sideC < sideA) {
+        ctx.setLineDash([4 * dpr, 4 * dpr]);
+        ctx.strokeStyle = '#E53E3E';
+        ctx.lineWidth = 2 * dpr;
+        ctx.beginPath(); ctx.moveTo(pA_left.x, pA_left.y); ctx.lineTo(pA_right.x, pA_right.y); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#E53E3E';
+        ctx.font = `bold ${11 * dpr}px 'Nunito'`;
+        ctx.fillText('길이가 모자라 닿지 않음! ❌', (pA_left.x + pA_right.x)/2, (pA_left.y + pA_right.y)/2 - 8);
+      }
+    }
+  }
+
+  function drawArc(center, r, col, label) {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.save();
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 2 * dpr;
+    ctx.setLineDash([5 * dpr, 5 * dpr]);
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, r, Math.PI, 0, false);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawNode(x, y, col, label) {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.save();
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(x, y, 6 * dpr, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 2 * dpr;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.stroke();
+
+    if (label) {
+      ctx.fillStyle = '#2D3748';
+      ctx.font = `bold ${12 * dpr}px 'Jua'`;
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, y - 10 * dpr);
+    }
+    ctx.restore();
+  }
+
+  function getCircleIntersections(x0, r0, x1, r1) {
+    const d = Math.abs(x1 - x0);
+    if (d > r0 + r1 || d < Math.abs(r0 - r1)) return { status: 'none' };
+    if (Math.abs(d - (r0 + r1)) < 0.001 || Math.abs(d - Math.abs(r0 - r1)) < 0.001) {
+      return { status: 'touch' };
+    }
+    const a = (r0*r0 - r1*r1 + d*d) / (2*d);
+    const h = Math.sqrt(Math.max(0, r0*r0 - a*a));
+    return { status: 'two', x: a, y: h };
+  }
+
+  function updateComparison() {
+    const sides = [
+      { name: 'a', val: sideA, class: 'seg-a' },
+      { name: 'b', val: sideB, class: 'seg-b' },
+      { name: 'c', val: sideC, class: 'seg-c' }
+    ];
+
+    sides.sort((p, q) => q.val - p.val);
+    const longest = sides[0];
+    const other1 = sides[1];
+    const other2 = sides[2];
+    const restSum = other1.val + other2.val;
+
+    const badge = document.getElementById('resultBadge');
+    const emoji = document.getElementById('resultEmoji');
+    const title = document.getElementById('resultTitle');
+    const detail = document.getElementById('resultDetail');
+
+    badge.className = 'result-badge';
+
+    if (longest.val < restSum) {
+      badge.classList.add('yes');
+      emoji.innerText = '🎉';
+      title.innerText = '삼각형 완성!';
+      detail.innerText = `두 원호가 만나 꼭짓점이 생겼어요! (${longest.val} < ${restSum})`;
+    } else if (longest.val === restSum) {
+      badge.classList.add('flat');
+      emoji.innerText = '📏';
+      title.innerText = '삼각형 불가! (일직선)';
+      detail.innerText = `두 변이 밑변 위에 완전히 겹쳐서 높이가 0이 됩니다. (${longest.val} = ${restSum})`;
+    } else {
+      badge.classList.add('no');
+      emoji.innerText = '💔';
+      title.innerText = '삼각형을 만들 수 없어요!';
+      detail.innerText = `나머지 두 변이 너무 짧아서 서로 닿지 못해요! (${longest.val} > ${restSum})`;
+    }
+
+    // 비교 바 게이지 계산
+    const totalMax = Math.max(longest.val, restSum, 12);
+    document.getElementById('longestLetter').innerText = longest.name;
+
+    const barL = document.getElementById('longestBar');
+    barL.className = `seg ${longest.class}`;
+    barL.style.width = `${(longest.val / totalMax) * 92}%`;
+    barL.innerText = `${longest.name}=${longest.val}`;
+
+    const barO1 = document.getElementById('restBar1');
+    barO1.className = `seg ${other1.class}`;
+    barO1.style.width = `${(other1.val / totalMax) * 92}%`;
+    barO1.innerText = `${other1.name}=${other1.val}`;
+
+    const barO2 = document.getElementById('restBar2');
+    barO2.className = `seg ${other2.class}`;
+    barO2.style.width = `${(other2.val / totalMax) * 92}%`;
+    barO2.innerText = `${other2.name}=${other2.val}`;
+
+    let sign = '&lt;';
+    let resText = '<span style="color:#0E704D;">삼각형 가능 ✨</span>';
+    if (longest.val === restSum) {
+      sign = '=';
+      resText = '<span style="color:#A15500;">일직선 (불가) 📏</span>';
+    } else if (longest.val > restSum) {
+      sign = '&gt;';
+      resText = '<span style="color:#B91C1C;">닿지 않음 (불가) ❌</span>';
+    }
+
+    document.getElementById('formulaBanner').innerHTML = 
+      `가장 긴 변 <strong>(${longest.val})</strong> ${sign} 나머지 두 변의 합 <strong>(${restSum})</strong> ➜ ${resText}`;
+  }
+
+  // 모달 퀴즈 로직
+  function openFinalQuiz() {
+    document.getElementById('quizModal').style.display = 'flex';
+  }
+  function closeFinalQuiz() {
+    document.getElementById('quizModal').style.display = 'none';
+  }
+  function checkFinal(btn, isCorrect) {
+    const fb = document.getElementById('finalFeedback');
+    fb.style.display = 'block';
+    if (isCorrect) {
+      fb.style.color = '#0E704D';
+      fb.innerText = '🎉 딩동댕! 9 < 6 + 7 (9 < 13) 이므로 삼각형이 만들어집니다!';
+      btn.style.background = '#DEF7EC';
+    } else {
+      fb.style.color = '#C53030';
+      fb.innerText = '❌ 다시 계산해보세요! 가장 긴 변이 나머지 두 변의 합보다 작아야 해요.';
+      btn.style.background = '#FDE8E8';
+    }
+  }
+
+  window.onload = () => {
+    fitCanvas();
+    goStep(1);
+  };
+</script>
+
+</body>
+</html>
